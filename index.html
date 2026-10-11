@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kotiya Translator - KOT : ENG</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .translator-card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 650px;
+      border-top: 8px solid #0397CD;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .flag-banner {
+      display: flex;
+      height: 25px;
+      width: 70px;
+      margin: 0 auto 15px auto;
+      border: 1px solid #ccc;
+    }
+    .flag-white { width: 20%; background-color: #ffffff; }
+    .flag-blue { width: 80%; background-color: #0397CD; }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0397CD;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #027da8;
+    }
+
+    .output-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #eef8fc;
+      border-left: 4px solid #0397CD;
+      border-radius: 4px;
+      font-size: 18px;
+      min-height: 40px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="translator-card">
+    <div class="flag-banner">
+      <div class="flag-white"></div>
+      <div class="flag-blue"></div>
+    </div>
+
+    <h2>Kotiya Translator (KOT : ENG)</h2>
+
+    <label for="sourceText">Enter text in English:</label>
+    <textarea id="sourceText" placeholder="Example: I love China / tea / decade"></textarea>
+
+    <button onclick="translateToKotiya()">Translate to Kotiya</button>
+
+    <h3>Kotiya Result:</h3>
+    <div id="outputResult" class="output-box">...</div>
+  </div>
+
+  <script>
+    // Dictionary mapping English words to Kotiya (KOT : ENG)
+    const kotiyaDictionary = {
+      // Pronouns & Grammar
+      "i": "Ma",
+      "you": "Ka",
+      "he": "Ha",
+      "she": "Hai",
+      "it": "Hai",
+      "the": "A",
+      "and": "Wa",
+      "with": "Wa",
+      "now": "Ajxani",
+      "in": "Faiya",
+      "or": "Ora",
+      "no": "Na",
+      "yes": "Ye",
+      "what": "Wah",
+      "who": "Waz",
+      "why": "Lawh",
+      "on": "Cana",
+      "nobody": "Lajxad",
+      "no one": "Lajxad",
+      "hey": "Wahay",
+      "oh": "Hao",
+
+      // Numbers
+      "zero": "Ze", "0": "Ze",
+      "one": "Ajxad", "1": "Ajxad",
+      "two": "Ajxadx", "2": "Ajxadx",
+      "three": "Ajxadxy", "3": "Ajxadxy",
+      "four": "Ajxadxyez", "4": "Ajxadxyez",
+      "five": "Te", "5": "Te",
+      "six": "Tex", "6": "Tex",
+      "seven": "Texy", "7": "Texy",
+      "eight": "Texyez", "8": "Texyez",
+      "nine": "Tejxad", "9": "Tejxad",
+
+      // Time & Directions
+      "day": "Yawm",
+      "week": "Yawmez",
+      "month": "Xar",
+      "year": "Xarez",
+      "decade": "Qa",
+      "century": "Qaz",
+      "north": "Ras",
+      "south": "Tajxata",
+      "east": "Jan",
+      "west": "Şama",
+      "morning": "Şarawq",
+      "night": "Gharawb",
+
+      // Adjectives & Feelings
+      "long": "Camawd",
+      "tall": "Camawd",
+      "short": "Lawz",
+      "slow": "Lawgi",
+      "sweet": "Maz",
+      "love": "Caşqa",
+      "hate": "Nar",
+      "neutrality": "Salm",
+      "sadness": "Yas",
+      "sad": "Yas",
+      "joy": "Baa",
+      "happy": "Baa",
+      "stupid": "Nexabalh",
+      "filthy": "Yemlab",
+      "rude": "Yemlab",
+      "disgusting": "Yemlab",
+      "deformed": "Yemlab",
+      "treacherous": "Yemlab",
+
+      // Greetings & Common
+      "hi": "salam",
+      "hello": "salam",
+      "bye": "Xudajxafiz",
+      "goodbye": "Xudajxafiz",
+      "thing": "Saŋ",
+
+      // Nature & Country
+      "sun": "jxar",
+      "moon": "Badar",
+      "china": "Janqstan",
+
+      // Shapes
+      "circle": "Taze",
+      "triangle": "Tajxadxy",
+      "square": "Tajxadxyez",
+      "quadrilateral": "Tajxadxyez",
+      "pentagon": "Tate",
+      "hexagon": "Tatex",
+      "heptagon": "Tatexy",
+      "octagon": "Tatexyez",
+      "nonagon": "Tatejxad",
+
+      // Food & Drinks
+      "water": "Rawa",
+      "coffee": "Qava",
+      "milk": "Baz",
+      "curd": "jxam",
+      "laban": "jxam",
+      "tea": "Çay",
+      "juice": "Tajxna",
+      "drink": "Sagh",
+      "orange": "Prantga",
+      "pizza": "Paza",
+
+      // School & Education
+      "paper": "Lawjx",
+      "book": "tab",
+      "quiz": "Quza",
+      "exam": "Quza",
+      "test": "Quza",
+      "school": "Madrasa",
+      "pencil": "Qalam",
+      "pen": "Baghat",
+      "eraser": "Majxa",
+      "sharpener": "jxadaq",
+      "bag": "jxamla",
+      "bus": "Pas",
+      "teacher": "Şax",
+      "period": "Fatra",
+      "class": "Ghar",
+      "language": "Kalam",
+      "science": "Ajxya",
+      "math": "jxesab",
+      "mathematics": "jxesab",
+      "religion": "Deen",
+      "history": "Tarejx",
+      "social": "Tarejx",
+      "quran": "Qur'an",
+      "family": "jxaya",
+      "technology": "Taqna",
+      "computer": "Taqna",
+      "programming": "Taqna",
+      "sports": "rayaza",
+      "physical": "rayaza",
+      "yard": "Sajxa",
+      "playground": "Malha",
+      "boardroom": "Ghar Adara",
+      "cafeteria": "Kaftar",
+      "canteen": "Kaftar",
+      "break": "ghaza",
+      "lunch": "ghaza",
+      "exit": "Faraj",
+      "manager": "Şar",
+      "deputy": "Na'ibşar",
+      "guide": "Hadi",
+      "student": "Tax",
+      "notebook": "Lawjxa",
+      "sketchbook": "Rassam",
+      "color": "Zun",
+
+      // Family, Items & Services
+      "father": "Ba",
+      "mother": "Baya",
+      "service": "Xadma",
+      "touch": "Taşa",
+      "sign": "Tughra",
+      "signature": "Tughra",
+      "hurt": "Wagca",
+      "pain": "Wagca",
+      "search": "Talap",
+      "request": "Talap",
+      "suggestion": "Talap",
+      "blood": "jxamr",
+      "understand": "Calem",
+      "phone": "Nagal",
+      "tv": "Marwah",
+      "television": "Marwah",
+      "ac": "Şatwah",
+      "bed": "Yatakah",
+      "blanket": "Lajxavah",
+      "pillow": "Yatakah Ras",
+      "table": "Vadah",
+      "drawer": "Xaznah",
+      "safe": "Xaznah",
+      "closet": "Xaznah",
+      "clothes": "Labas",
+
+      // Specific words
+      "testicle": "Kuradx",
+      "ass": "Kuradx Kabr",
+      "shit": "Zaghla",
+      "piss": "Zaghla",
+      "fart": "Gazala",
+      "penis": "Jabala",
+
+      // Actions
+      "like": "Qanuni"
+    };
+
+    function translateToKotiya() {
+      const input = document.getElementById("sourceText").value;
+      if (!input.trim()) {
+        document.getElementById("outputResult").innerText = "...";
+        return;
+      }
+
+      const words = input.split(/\s+/);
+
+      const translatedWords = words.map(word => {
+        const cleanWord = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+        
+        if (kotiyaDictionary[cleanWord]) {
+          return kotiyaDictionary[cleanWord];
+        } else {
+          return word;
+        }
+      });
+
+      document.getElementById("outputResult").innerText = translatedWords.join(" ");
+    }
+  </script>
+
+</body>
+  </html>
+  
