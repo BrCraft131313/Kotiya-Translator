@@ -309,6 +309,8 @@
       const words = input.split(/\s+/);
 
       const translatedWords = words.map(word => {
+
+        const cleanWord = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
         
         if (kotiyaDictionary[cleanWord]) {
           return kotiyaDictionary[cleanWord];
